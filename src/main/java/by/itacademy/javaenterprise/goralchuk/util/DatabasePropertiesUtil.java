@@ -3,8 +3,8 @@ package by.itacademy.javaenterprise.goralchuk.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public final class DatabasePropertiesUtil {
@@ -17,7 +17,9 @@ public final class DatabasePropertiesUtil {
     private static String getProperties(String str) {
         Properties props = new Properties();
         try {
-            props.load(new FileInputStream("src/main/resources/database/database.properties"));
+            String propFileName = "database/database.properties";
+            InputStream inputStream = DatabasePropertiesUtil.class.getClassLoader().getResourceAsStream(propFileName);
+            props.load(inputStream);
         } catch (IOException e) {
             logger.error(e.toString(), e);
         }
