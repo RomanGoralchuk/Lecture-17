@@ -25,7 +25,7 @@ public class App {
             logger.info("" + petDao.findAllEntity());
             logger.info("" + peopleDao.find(1L));
             petDao.delete(1L);
-            System.out.println(peopleDao.getAllPeopleByPetType(PetType.CAT));
+            logger.info("" + peopleDao.getAllPeopleByPetType(PetType.CAT));
         } catch (StackOverflowError  e) {
             logger.error(e.getMessage(), e);
         }
