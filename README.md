@@ -10,9 +10,9 @@
 8. Create CRUD DAO (use EntityManager) for POJOs
 9. Tests
 ### Start script
-> docker-compose up -d 
-#### start migrations:
-> mvn flyway:migrate
+* `docker-compose up -d`
+* `mvn clean package`
+* `java -jar target\lecture-17-1.0-SNAPSHOT.jar`
 
 ### Standard links
 + [Pom xml](pom.xml)
