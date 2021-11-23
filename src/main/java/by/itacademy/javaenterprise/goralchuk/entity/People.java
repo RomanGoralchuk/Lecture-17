@@ -21,7 +21,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Entity
 @Table(name = "people")
-public class People implements Serializable {
+public class People {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "people_id")

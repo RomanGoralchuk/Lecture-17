@@ -45,21 +45,82 @@ public class PetDaoImpl implements PetDao {
 
     @Override
     public boolean update(Pet petNew) {
+        if (petNew != null) {
+            try {
+                Pet petOld = em.find(Pet.class, petNew.getId());
+                try {
+                    em.detach(petOld);
+                    if (petNew.getName() != null) {
+                        petOld.setName(petNew.getName());
+                    }
+                    if (petNew.getType() != null) {
+                        petOld.setType(petNew.getType());
+                    }
+                    if (petNew.getBirthday() != null) {
+                        petOld.setBirthday(petNew.getBirthday());
+                    }
+                    em.getTransaction().begin();
+                    em.merge(petOld);
+                    em.getTransaction().commit();
+                    return true;
+                } catch (Exception e) {
+                    em.getTransaction().rollback();
+                    logger.error("Transaction failed " + e.getMessage(), e);
+                    return false;
+                }
+            } catch (IllegalArgumentException ex) {
+                logger.error("No such object was found in the database", ex);
+            }
+        }
+        logger.error(new NullPointerException("Method field cannot be empty").getMessage());
         return false;
     }
 
     @Override
     public boolean delete(Long id) {
-        return false;
+        Pet pet = em.find(Pet.class, id);
+        if (pet == null) {
+            logger.error(new IllegalArgumentException("(" + id + ") -This value does not exist in the database.").getMessage());
+            return false;
+        } else {
+            try {
+                em.getTransaction().begin();
+                if (pet.getMaster() != null) {
+                    pet.getMaster().setPetPeople(null);
+                }
+                em.remove(pet);
+                em.getTransaction().commit();
+                logger.info("\n Object " + pet + " deleted");
+                return true;
+            } catch (Exception e) {
+                em.getTransaction().rollback();
+                logger.error("Transaction failed " + e.getMessage(), e);
+                return false;
+            }
+        }
     }
 
     @Override
     public List<Pet> findAllEntity() {
-       return null;
+        try {
+            List<Pet> list = em.createQuery("from Pet").getResultList();
+            return list;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return null;
+        }
     }
 
     @Override
     public List<Pet> getAllPetByType(PetType petType) {
-        return null;
+        try {
+            List<Pet> list = em.createQuery("from Pet where type = ?1")
+                    .setParameter(1, petType)
+                    .getResultList();
+            return list;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return null;
+        }
     }
 }

@@ -23,7 +23,7 @@ import java.util.Date;
 @Entity
 @NoArgsConstructor
 @Table(name = "pet")
-public class Pet implements Serializable {
+public class Pet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "pet_id")
