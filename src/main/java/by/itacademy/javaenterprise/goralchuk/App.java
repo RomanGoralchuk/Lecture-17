@@ -22,10 +22,20 @@ public class App {
             FlywayUtil.updateMigration();
             PetDaoImpl petDao = new PetDaoImpl(em);
             PeopleDaoImpl peopleDao = new PeopleDaoImpl(em);
+<<<<<<< HEAD
             logger.info("" + petDao.findAllEntity());
             logger.info("" + peopleDao.find(1L));
             petDao.delete(1L);
             logger.info(peopleDao.getAllPeopleByPetType(PetType.CAT));
+=======
+
+            petDao.delete(4L);
+            peopleDao.delete(5L);
+
+            logger.info("{}", petDao.findAll());
+            logger.info("{}", peopleDao.find(1L));
+            logger.info("{}", peopleDao.getAllPeopleByPetType(PetType.CAT));
+>>>>>>> 384e3c5 (fixed homework)
         } catch (StackOverflowError  e) {
             logger.error(e.getMessage(), e);
         }

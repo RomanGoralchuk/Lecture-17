@@ -1,5 +1,6 @@
 package by.itacademy.javaenterprise.goralchuk.dao.implementation;
 
+import by.itacademy.javaenterprise.goralchuk.entity.People;
 import by.itacademy.javaenterprise.goralchuk.entity.Pet;
 import by.itacademy.javaenterprise.goralchuk.entity.PetType;
 import org.junit.*;
@@ -12,8 +13,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,8 +21,9 @@ import static org.mockito.Mockito.*;
 
 public class PetDaoImplTest {
     private static final Logger logger = LoggerFactory.getLogger(PetDaoImplTest.class);
-    private EntityManager eManager;
-    private EntityTransaction eTransaction;
+
+    private EntityManager entityManagerManager;
+    private EntityTransaction entityTransactionTransaction;
     private PetDaoImpl petDao;
 
     @Rule
@@ -40,111 +40,95 @@ public class PetDaoImplTest {
     };
 
     @Before
-    public void setUp() throws Exception {
-        eManager = mock(EntityManager.class);
-        eTransaction = mock(EntityTransaction.class);
-        petDao = new PetDaoImpl(eManager);
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        eManager.close();
+    public void setUp() {
+        entityManagerManager = mock(EntityManager.class);
+        entityTransactionTransaction = mock(EntityTransaction.class);
+        petDao = new PetDaoImpl(entityManagerManager);
     }
 
     @Test
-    public void whenFindPetById() throws SQLException {
+    public void whenFindPetById() {
         Long expectedId = 10L;
-        Pet pet = new Pet();
-        pet.setId(expectedId);
+        Pet pet = new Pet(expectedId);
 
-        when(eManager.find(Pet.class, expectedId)).thenReturn(pet);
+        when(entityManagerManager.find(Pet.class, expectedId)).thenReturn(pet);
+
+        logger.info("FirstObject  {}", pet);
+        logger.info("SecondObject  {}", petDao.find(expectedId));
 
         assertEquals(pet, petDao.find(expectedId));
-        logger.info("\n FirstObject  {}", pet);
-        logger.info("\n SecondObject  {}", petDao.find(expectedId));
     }
 
     @Test
     public void whenSavePetToDatabase() {
-        Pet pet = new Pet();
-        pet.setId(10L);
+        Long expectedId = 10L;
+        Pet pet = new Pet(expectedId);
 
-        when(eManager.getTransaction()).thenReturn(eTransaction);
+        when(entityManagerManager.getTransaction()).thenReturn(entityTransactionTransaction);
 
-        boolean expectedSaveResult = petDao.save(pet);
-
-        assertNotNull(pet);
-        assertTrue(expectedSaveResult);
+        assertNotNull(petDao.save(pet));
+        assertEquals(expectedId, petDao.save(pet).getId());
     }
 
     @Test
     public void whenUpdatePetToDatabase() {
-        Long keyId = 10L;
+        Long expectedId = 10L;
+        Pet petOne = new Pet(expectedId);
 
-        Pet petInDatabase = new Pet();
-        petInDatabase.setId(keyId);
-        petInDatabase.setName("TestOldName");
+        Pet petTwo = new Pet(expectedId);
+        petTwo.setName("testUpdate");
 
-        Pet petUpdateData = new Pet();
-        petUpdateData.setId(keyId);
-        petUpdateData.setName("TestUpdateName");
+        when(entityManagerManager.getTransaction()).thenReturn(entityTransactionTransaction);
 
-        Pet petNew = new Pet();
-        petNew.setId(keyId);
-        petNew.setName(petUpdateData.getName());
+        logger.info(petDao.update(petOne).toString());
+        logger.info(petDao.update(petTwo).toString());
 
-        when(eManager.getTransaction()).thenReturn(eTransaction);
-        when(eManager.find(Pet.class, keyId)).thenReturn(petInDatabase);
-        when(eManager.merge(petUpdateData)).thenReturn(petNew);
-
-        logger.info("IN DB " + petInDatabase);
-        logger.info("UPDATE " + petNew);
-        assertTrue("Was the transaction successful - {}", petDao.update(petUpdateData));
-        logger.info("NEW IN DB " + petInDatabase);
-        assertEquals("Compare by content test", petNew.toString(), petInDatabase.toString());
+        assertNotNull(petDao.update(petTwo));
+        assertEquals(expectedId, petDao.update(petTwo).getId());
     }
 
     @Test
     public void whenDeletePetFromDatabase() {
-        Long keyId = 10L;
+        Long expectedId = 10L;
+        Pet pet = new Pet(expectedId);
 
-        Pet pet = new Pet();
-        pet.setId(keyId);
+        when(entityManagerManager.getTransaction()).thenReturn(entityTransactionTransaction);
+        when(entityManagerManager.find(Pet.class, expectedId)).thenReturn(pet);
 
-        when(eManager.getTransaction()).thenReturn(eTransaction);
-        when(eManager.find(Pet.class, keyId)).thenReturn(pet).thenReturn(null);
+        petDao.delete(expectedId);
 
-        logger.info("Test people {}", pet);
-        assertTrue(petDao.delete(keyId));
+        Long actualID = petDao.delete(expectedId);
+
+        assertEquals(expectedId, actualID);
     }
 
     @Test
     public void whenFindAllPet() {
-        List<Pet> petList = new ArrayList<>();
-        petList.add(0, new Pet("TestName 1", PetType.DOG, null));
-        petList.add(1, new Pet("TestName 2", PetType.CAT, null));
-        petList.add(2, new Pet("TestName 3", PetType.COW, null));
+        List<Pet> petList = List.of(
+                new Pet("TestName 1", PetType.DOG, null),
+                new Pet("TestName 2", PetType.CAT, null),
+                new Pet("TestName 3", PetType.COW, null));
 
         Query query = mock(Query.class);
-        when(eManager.createQuery(anyString())).thenReturn(query);
+        when(entityManagerManager.createQuery(anyString())).thenReturn(query);
         when(query.getResultList()).thenReturn(petList);
 
         int expectedSize = petList.size();
-        int actualSize = petDao.findAllEntity().size();
+        int actualSize = petDao.findAll().size();
 
         assertEquals("Test find all pets", expectedSize, actualSize);
     }
 
     @Test
     public void whenFindAllPeopleByPetType() {
-        List<Pet> petList = new ArrayList<>();
-        petList.add(0, new Pet("TestPetName1", PetType.CAT, java.sql.Date.valueOf("1000-10-10")));
-        petList.add(1, new Pet("TestPetName2", PetType.DOG, java.sql.Date.valueOf("1000-10-10")));
-        petList.add(2, new Pet("TestPetName3", PetType.CAT, java.sql.Date.valueOf("1000-10-10")));
+        List<Pet> petList = List.of(
+                new Pet("TestPetName1", PetType.CAT, java.sql.Date.valueOf("1000-10-10")),
+                new Pet("TestPetName2", PetType.DOG, java.sql.Date.valueOf("1000-10-10")),
+                new Pet("TestPetName3", PetType.CAT, java.sql.Date.valueOf("1000-10-10")));
 
         String validQuery = "from Pet where type = ?1";
         Query query = mock(Query.class);
-        when(eManager.createQuery(validQuery)).thenReturn(query);
+        when(entityManagerManager.createQuery(validQuery)).thenReturn(query);
         when(query.setParameter(1, PetType.CAT)).thenReturn(query);
 
         List<Pet> expectedList = petList.stream()

@@ -14,7 +14,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import java.io.Serializable;
 
 @Getter
 @Setter
@@ -30,12 +29,16 @@ public class People {
     private String surname;
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "pet_id")
-    private Pet petPeople;
+    private Pet pet;
 
-    public People(String name, String surname, Pet petPeople) {
+    public People(String name, String surname, Pet pet) {
         this.name = name;
         this.surname = surname;
-        this.petPeople = petPeople;
+        this.pet = pet;
+    }
+
+    public People(Long id) {
+        this.id = id;
     }
 
     @Override
@@ -44,7 +47,7 @@ public class People {
                 "Id=" + id +
                 ", name='" + name + "'" +
                 ", surname='" + surname + "'" +
-                ", pet=" + petPeople +
+                ", pet=" + pet +
                 '}';
     }
 }

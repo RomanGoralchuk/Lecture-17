@@ -46,7 +46,7 @@ public enum PetType {
                         .filter(el -> el.getCode().equals(string))
                         .findFirst()
                         .orElseThrow(() -> new IllegalArgumentException("Bad argument converter"));
-            } catch (Exception e) {
+            } catch (IllegalArgumentException e) {
                 logger.error(e.getMessage(), e);
                 return null;
             }
