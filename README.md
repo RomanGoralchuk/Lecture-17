@@ -25,9 +25,3 @@
 * `mvn clean package`
 * `docker-compose up -d`
 * `java -jar target\lecture-17-1.0-SNAPSHOT.jar`
-
-### Standard links
-+ [Pom xml](pom.xml)
-+ [Main class](src/main/java/by/itacademy/javaenterprise/goralchuk/App.java)
-+ [Migration path](src/main/resources/database/migration)
-+ [Database properties](src/main/resources/database/database.properties)
