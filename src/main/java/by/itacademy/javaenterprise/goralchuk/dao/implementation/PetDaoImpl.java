@@ -67,7 +67,6 @@ public class PetDaoImpl implements PetDao {
         try {
             entityManager.getTransaction().begin();
             Pet pet = entityManager.find(Pet.class, id);
-/*            pet.getPeople().setPet(null);*/
             entityManager.remove(pet);
             entityManager.getTransaction().commit();
             logger.debug("Object {} deleted", id);
