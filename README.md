@@ -9,13 +9,19 @@
 7. Configure POJO mapping with JPA annotations
 8. Create CRUD DAO (use EntityManager) for POJOs
 9. Tests
-### Start script
-* `docker-compose up -d`
-* `mvn clean package`
-* `java -jar target\lecture-17-1.0-SNAPSHOT.jar`
 
-### Standard links
-+ [Pom xml](pom.xml)
-+ [Main class](src/main/java/by/itacademy/javaenterprise/goralchuk/App.java)
-+ [Migration path](src/main/resources/database/migration)
-+ [Database properties](src/main/resources/database/database.properties)
+### Technologies
+* Java 11
+* Maven
+* FlyWay
+* Slf4j+Logback
+* MariaDB
+* Mockito
+* JUnit4
+* Docker-compose
+* Hibernate
+
+### Start script
+* `mvn clean package`
+* `docker-compose up -d`
+* `java -jar target\lecture-17-1.0-SNAPSHOT.jar`

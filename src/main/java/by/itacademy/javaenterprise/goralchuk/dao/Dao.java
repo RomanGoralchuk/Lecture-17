@@ -1,16 +1,15 @@
 package by.itacademy.javaenterprise.goralchuk.dao;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public interface Dao<T> {
-    T find(Long id) throws SQLException;
+    T find(Long id);
 
-    boolean save(T t) throws SQLException;
+    T save(T t);
 
-    boolean update(T t) throws SQLException;
+    T update(T t);
 
-    boolean delete(Long id) throws SQLException;
+    long delete(Long id);
 
-    List<T> findAllEntity() throws SQLException;
+    List<T> findAll();
 }

@@ -8,8 +8,6 @@
         <description>Entity manager was starting</description>
 
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <class>by.itacademy.javaenterprise.goralchuk.entity.Pet</class>
-        <class>by.itacademy.javaenterprise.goralchuk.entity.People</class>
 
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
